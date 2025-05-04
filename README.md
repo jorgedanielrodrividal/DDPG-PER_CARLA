@@ -208,7 +208,7 @@ Empirically, the input is fixed to a window of 15 waypoints [6]. At each time st
 
 # Videos 
 
-[Showcase of DDPG 2 (Episode 41)](https://github.com/your-user/your-repo/issues/1)
+[Showcase of DDPG 2 (Episode 41)](https://github.com/user-attachments/assets/5f47b002-14c6-478f-a955-226a5b1949d2)
 
 [Showcase of DDPG 3 (Episode 609)](https://github.com/your-user/your-repo/issues/1)
 
