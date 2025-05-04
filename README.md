@@ -208,11 +208,11 @@ Empirically, the input is fixed to a window of 15 waypoints [6]. At each time st
 
 # Videos 
 
-[Showcase of DDPG 2 (Episode 41)](https://vimeo.com/1081342915?share=copy)
+[Showcase of DDPG 2 (Episode 41)](https://drive.google.com/file/d/1lr59xcmg-3qt59PY5B2O_WX7rdY5kdHT/view?usp=sharing)
 
-[Showcase of DDPG 3 (Episode 609)](https://github.com/your-user/your-repo/issues/1)
+[Showcase of DDPG 3 (Episode 609)](https://drive.google.com/file/d/1IXq5m0Px0aiDdRc6C8671-rQ1I9TNKNm/view?usp=sharing)
 
-[Showcase of DDPG 6 (Episode 243)](https://github.com/your-user/your-repo/issues/1)
+[Showcase of DDPG 6 (Episode 243)](https://drive.google.com/file/d/1Itmr8ctRpjMLdwk_ir1qYoFxFuWVFeTT/view?usp=sharing)
 
 
 # Discussion & Future Work
