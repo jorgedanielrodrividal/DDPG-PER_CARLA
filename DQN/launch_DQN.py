@@ -11,11 +11,6 @@ config_path = settings.path2CARLA + 'PythonAPI/util/config.py'
 os.system(f'PYTHONPATH={carla_egg_path} python3 {config_path} -m {settings.CARLA_MAP}')
 time.sleep(5)
 
-#Clear Carla Environment
-# print('### Reseting Carla Map ###')
-# os.system('python3 ' + settings.path2CARLA + 'PythonAPI/util/config.py -m ' + str(settings.CARLA_MAP))
-# time.sleep(5)
-
 
 print('####### RUNNING DQN', settings.WORKING_MODE, ' IN ', settings.TRAIN_PLAY[settings.TRAIN_PLAY_MODE], ' MODE #######')
 

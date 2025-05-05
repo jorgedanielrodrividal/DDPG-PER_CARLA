@@ -6,7 +6,7 @@ env_params = {
 
 #TRAINING MODES
 TRAIN_PLAY_MODE = 0  # Train=1 Play=0
-GUARDAR_DATOS = 0 # 1 ; USED IN EVALUATION ONLY: Para guardar trayectoria recorrida y waypoints
+SAVE_DATA = 0 # 1 ; USED IN EVALUATION ONLY
 TRAIN_PLAY = ["PLAY", "TRAIN"]
 WORKING_MODE_OPTIONS = ["WAYPOINTS_CARLA","WAYPOINTS_IMAGE","CNN_BW_TRAJECTORY","CNN_RGB","CNN_RGB_TRAJECTORY",
                         "CNN_SEMANTIC", "CNN_GRAYSCALE", "CNN_FLATTEN", "TP_ANG", "PRE_TRAINED_CNN"]
@@ -29,15 +29,14 @@ CARLA_MAP = 'Town01'   # "mapa_oscar_v5"
 TRAIN_MODE_OPTIONS=["RANDOM", "STRAIGHT", "TURN_LEFT", "TURN_RIGHT", "TURN_RIGHT_LEFT", "TURN_LEFT_RIGHT", "ALTERNATIVE", "RANDOM_TURN"]
 TRAIN_MODE = "TURN_RIGHT_LEFT" # "TURN_RIGHT_LEFT" 
 
-path2CARLA = "/home/jorge-daniel/Desktop/carla/" # PATH hasta carla se utiliza para limpiar el mapa
-#path2carla = "/home/proyectosros/carla/carla/"
+path2CARLA = "/home/jorge-daniel/Desktop/carla/"
 
 #IMAGE CONFIGURATION
 IM_WIDTH_VISUALIZATION = 640*2
 IM_HEIGHT_VISUALIZATION = 480
 # for Flatten-Image Agent, the paper resizes image to 11×11
-IM_WIDTH_CNN = 11 #160 #PARA MANTENER LA RELACION DE 8/3 DEBERÍA SER 160
-IM_HEIGHT_CNN = 11 #60
+IM_WIDTH_CNN = 11 
+IM_HEIGHT_CNN = 11 
 
 tau = 0.001  # Target Network HyperParameter
 lra = 0.0001  # Learning rate for Actor
@@ -77,7 +76,7 @@ ACTION_CONTROL = {
     #3: None,
 }
 
-modo_recompensa = 2
+reward_mode = 2
 STEER_AMT = 0.2
 CNN_MODEL = 2
 DISCOUNT = 0.99
@@ -97,17 +96,7 @@ UPDATE_TARGET_EVERY = 5
 EPISODES = 20_000
 AGGREGATE_STATS_EVERY = 10
 AGENT_PATH = "../models/data_" + str(WORKING_MODE) + "/"
-MODEL_PATH = "../models/data_WAYPOINTS_CARLA/TURN_RIGHT_LEFT_best_reward_ep_4838_model.model" # os.path.join(AGENT_PATH, f"{TRAIN_MODE}_last_model.model")  # Aligned with resume training
-
-# MODEL_PATH = "models/data_" + str(WORKING_MODE) + "/" + str(TRAIN_MODE) + "_best_reward_model.model"
-# MODEL_PATH = "../models/data_" + str(WORKING_MODE) + "/RANDOM_8900_model.model"
-
-# MODEL_PATH = "../models/data_WAYPOINTS_CARLA/RANDOM_8900_model.model"
-
-# MODEL_PATH = "../models/data_" + str(WORKING_MODE) + "/ALTERNATIVE_7300_model.model"
-# MODEL_PATH = "../models/data_" + str(WORKING_MODE) + "/TURN_RIGHT_best_reward_model.model"
-# MODEL_PATH = "models/data_PRE_TRAINED_CNN/TURN_RIGHT_best_reward_model.model"
-# PRE_CNN_PATH = "../PRE_CNN_models/PilotNet_2002m_BEV.model"
+MODEL_PATH = "../models/data_WAYPOINTS_CARLA/TURN_RIGHT_LEFT_best_reward_ep_4838_model.model" 
 
 N_save_stats = 100
 ########################   ADD FOR DQN   #####################
@@ -116,12 +105,12 @@ N_save_stats = 100
 BEV_PRE_CNN = 0
 
 #WORKING TYPE SELECTION
-WAYPOINTS = 'X'     # X para utilizar solo coordenadas X, XY para utilizar coordenadas XY
-THRESHOLD = 0  # FLAG DE UMBRALIZACIÓN
-DRAW_TRAJECTORY = 0 # NO PINTAR=0, PINTAR=1
+WAYPOINTS = 'X'     # X to only use X, XY for 2D
+THRESHOLD = 0  
+DRAW_TRAJECTORY = 0 
 IM_LAYERS = 1
-state_dim = 16 #Dimension de los datos de entrada a la red.
-dimension_vector_estado = 16 #Dimension del vector de estado calculado en transform2lcoal, necesario para recompensa en todos los casos
+state_dim = 16 # Input dimension to network
+dimension_vector_estado = 16 
 if WORKING_MODE == WORKING_MODE_OPTIONS[0]:         # WAYPOINTS_CARLA
     if WAYPOINTS == 'XY':
         state_dim = 31
@@ -157,7 +146,7 @@ elif WORKING_MODE == WORKING_MODE_OPTIONS[6]:       # CNN_GRAYSCALE
 elif WORKING_MODE == WORKING_MODE_OPTIONS[7]:       # CNN_FLATTEN
     IM_LAYERS = 1                               # GrayScale = 1, Color = 3
     IM_TYPE = 0                                 # RGB=0, SemanticSegmetnation=1
-    THRESHOLD = 1                               # FLAG DE UMBRALIZACIÓN
+    THRESHOLD = 1                               
     DRAW_TRAJECTORY = 1
     state_dim = IM_WIDTH_CNN * IM_HEIGHT_CNN
 
@@ -173,7 +162,7 @@ elif WORKING_MODE == WORKING_MODE_OPTIONS[9]:       # PRE-TAINED-CNN
     IM_LAYERS = 3                               # GrayScale = 1, Color = 3
     IM_TYPE = 0                                 # RGB=0, SemanticSegmetnation=1
     DRAW_TRAJECTORY = 1
-    THRESHOLD = 0                               # FLAG DE UMBRALIZACIÓN
+    THRESHOLD = 0                               
     IM_WIDTH_VISUALIZATION = 2*640
     CAM_X = 1.0
     CAM_Z = 2

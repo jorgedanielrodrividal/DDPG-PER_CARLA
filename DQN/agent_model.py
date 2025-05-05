@@ -61,23 +61,11 @@ class DQNAgent:
 
             input_layer = Input(shape=[settings.state_dim, ])
             h0 = Dense(300, activation="tanh")(input_layer)
-            # h1 = Dense(600, activation="linear")(h0)
-            # h2 = Dense(800, activation="linear")(h1)
 
             output_layer = Dense(settings.N_actions, activation="linear")(h0)
             self.model = Model(input=input_layer, output=output_layer)
             self.model.compile(loss="mse", optimizer=Adam(lr=0.001), metrics=["accuracy"])
             print(self.model.summary())
-
-
-            # self.model.add(Dense(300, input_shape=[21], activation="relu"))
-            # self.model.add(Dense(600, activation="relu"))
-            # inputs = self.model.input
-            # x = self.model.output
-            # x = Dense(256, activation='relu')(x)
-            # predictions = Dense(3, activation='linear')(x)
-            # self.model = Model(input=inputs, output=predictions)
-            # self.model.compile(loss="mse", optimizer=Adam(lr=0.001), metrics=["accuracy"])
 
         else:
             if (settings.CNN_MODEL == 1):  # 4_CNN
@@ -187,14 +175,14 @@ class DQNAgent:
         try:
             # Make sure you do not load a model to the wrong training path
             self.model = load_model(settings.MODEL_PATH)
-            print('Modelo cargado:', settings.MODEL_PATH)
+            print('Load model:', settings.MODEL_PATH)
         except:
-            print('Entrenamiento nuevo')
+            print('Training from scratch')
 
         self.target_model = self.model
         self.target_model.set_weights(self.model.get_weights())
 
-        ### Try loading replay memory ###
+        # Loading replay memory to resume training
         self.replay_memory = deque(maxlen=settings.REPLAY_MEMORY_SIZE)  # memory of previous actions, keep random set actions to help with volatility
         replay_buffer_path = "replay_buffer.pkl"
         if os.path.exists(replay_buffer_path):
@@ -207,7 +195,6 @@ class DQNAgent:
 
         self.tensorboard = ModifiedTensorBoard(log_dir=f"logs/logs_{settings.WORKING_MODE}/{settings.TRAIN_MODE}-{int(time.time())}")
         self.target_update_counter = 0  # updates after every episode
-        # self.graph = tf.get_default_graph() #use for use different threads (train and predict)
         self.graph = tf.compat.v1.get_default_graph()  # use for use different threads (train and predict)
 
         self.terminate = False
@@ -221,7 +208,7 @@ class DQNAgent:
                                   rankdir='TB')
 
     def update_replay_memory(self, transition):
-        # transition = (current_state, action, reward, new_state, done)
+        # transition made of (current_state, action, reward, new_state, done)
         self.replay_memory.append(transition)
 
     def train(self):
@@ -236,9 +223,6 @@ class DQNAgent:
         with self.graph.as_default():
             current_qs_list = self.model.predict(current_states, settings.PREDICTION_BATCH_SIZE)
 
-            # print("Model predict en train")
-
-        # print("Después de model.predict")
         new_current_states = np.array([transition[3] for transition in minibatch])
 
         with self.graph.as_default():
@@ -299,8 +283,6 @@ class DQNAgent:
 
 
     def train_in_loop(self):
-        # print("Entra a train in loop")
-        # X = np.random.uniform(size=(1, IM_HEIGHT, IM_WIDTH, IM_LAYERS)).astype(np.float32)
         if settings.WORKING_MODE == settings.WORKING_MODE_OPTIONS[0] or\
                 settings.WORKING_MODE == settings.WORKING_MODE_OPTIONS[1] or \
                 settings.WORKING_MODE == settings.WORKING_MODE_OPTIONS[7] or \
@@ -312,12 +294,9 @@ class DQNAgent:
 
         y = np.random.uniform(size=(1, settings.N_actions)).astype(np.float32)
         with self.graph.as_default():
-            # print("Entra a graph")
             print(X.shape)
             self.model.fit(X, y, verbose=False, batch_size=1)
 
-
-            # print("Model fit en train_in_loop")
         self.training_initialized = True
 
         while True:
