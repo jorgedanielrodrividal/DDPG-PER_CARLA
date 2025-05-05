@@ -14,20 +14,11 @@ from actor import ActorNetwork
 from critic import CriticNetwork
 from actor_CNN import ActorNetwork_CNN
 from critic_CNN import CriticNetwork_CNN
-# from DDPG.carla_env import CarEnv
-# from DDPG.actor import ActorNetwork
-# from DDPG.critic import CriticNetwork
-# from DDPG.actor_CNN import ActorNetwork_CNN
-# from DDPG.critic_CNN import CriticNetwork_CNN
 
 from keras.callbacks import TensorBoard
-# from util.noise import OrnsteinUhlenbeckActionNoise
 # from replay_buffer_PER import PrioritizedReplayBuffer
 from replay_buffer import ReplayBuffer
-# from DDPG.replay_buffer import ReplayBuffer
-import cv2
 import carla_config as settings
-from keras.models import load_model
 
 time_buff = []
 
@@ -82,14 +73,6 @@ class ModifiedTensorBoard(TensorBoard):
         self._write_logs(stats, self.step)
 
 
-# def find_latest_checkpoint(checkpoint_dir, train_mode):
-#     pattern = os.path.join(checkpoint_dir, f"{train_mode}_*_actor.h5")
-#     model_paths = glob.glob(pattern)
-#     if not model_paths:
-#         return None
-#     episodes = [int(p.split(f"{train_mode}_")[1].split("_")[0]) for p in model_paths]
-#     return max(episodes)
-
 def find_latest_checkpoint(checkpoint_dir, train_mode):
     pattern = os.path.join(checkpoint_dir, f"{train_mode}_*_actor.model")
     model_paths = glob.glob(pattern)
@@ -112,7 +95,6 @@ def find_latest_checkpoint(checkpoint_dir, train_mode):
 
 def play(train_indicator):
 
-    # ou_sigma = 0.3
     tensorboard = ModifiedTensorBoard(log_dir=f"logs/logs_{settings.WORKING_MODE}/{settings.TRAIN_MODE}-{int(time.time())}")
     step = 0
 
@@ -122,7 +104,7 @@ def play(train_indicator):
 
     keras_backend.set_session(tf_session)
 
-    # === Checkpoint loading for resume training ===
+    # Resume training setup
     checkpoints_dir = settings.AGENT_PATH
     os.makedirs(checkpoints_dir, exist_ok=True)
 
@@ -167,8 +149,6 @@ def play(train_indicator):
         if os.path.exists(buffer_path):
             with open(buffer_path, 'rb') as f:
                 buffer = pickle.load(f)
-
-        # start_episode = latest_ep + 1
     else:
         print("[INFO] Starting training from scratch")
         start_episode = 0
@@ -182,20 +162,6 @@ def play(train_indicator):
     # noise function for exploration
     # ou = OrnsteinUhlenbeckActionNoise(mu=np.zeros(action_dim), sigma=ou_sigma * np.ones(action_dim))
 
-    # Torcs environment - throttle and gear change controlled by client
-
-
-    # try:
-    #     # print(settings.critic_weights_file)
-    #     actor.model.load_weights(settings.actor_weights_file)
-    #     critic.model.load_weights(settings.critic_weights_file)
-    #     actor.target_model.load_weights(settings.actor_weights_file)
-    #     critic.target_model.load_weights(settings.critic_weights_file)
-    #     print("Weights loaded successfully")
-    # except:
-    #     print("Cannot load weights")
-
-    # for i in range(settings.episodes_num):
     for i in tqdm(range(start_episode + 1, settings.episodes_num + 1),
                   initial=start_episode + 1,
                   total=settings.episodes_num,
@@ -220,8 +186,7 @@ def play(train_indicator):
             if settings.WORKING_MODE == settings.WORKING_MODE_OPTIONS[7]:
                 current_state = current_state.flatten()
 
-        if settings.GUARDAR_DATOS == 1:
-        #Guardar los waypoints
+        if settings.SAVE_DATA == 1:
             np.savetxt('Waypoints/DDPG_wp_' + str(settings.WORKING_MODE) + '_' + str(settings.TRAIN_MODE) + '_' + str(i) + '.txt', env.waypoints_txt, delimiter=';')
 
         total_reward = 0.0
@@ -231,7 +196,7 @@ def play(train_indicator):
             loss = 0
             if settings.WORKING_MODE == settings.WORKING_MODE_OPTIONS[0] or settings.WORKING_MODE == settings.WORKING_MODE_OPTIONS[1] \
                     or settings.WORKING_MODE == settings.WORKING_MODE_OPTIONS[8]:
-                action_predicted = actor.model.predict(state.reshape(1, state.shape[0]))  # + ou()  # predict and add noise
+                action_predicted = actor.model.predict(state.reshape(1, state.shape[0])) 
                 # action_predicted = action_predicted[0] + ou_noise.sample()
                 # action_predicted = np.clip(action_predicted, -1, 1)  # clip to [-1, 1]
                 [new_image, new_state], reward, done, info = env.step(action_predicted[0])
@@ -241,7 +206,7 @@ def play(train_indicator):
             else:
                 input_to_actor = np.transpose(current_state, (1, 0, 2))  # Swap H and W
                 action_predicted = actor.model.predict(input_to_actor.reshape(1, *input_to_actor.shape))
-                # action_predicted = actor.model.predict(np.array(current_state).reshape(-1, *current_state.shape))  # + ou()  # predict and add noise
+                # action_predicted = actor.model.predict(np.array(current_state).reshape(-1, *current_state.shape))
                 # action_predicted = action_predicted[0] + ou_noise.sample()
                 # action_predicted = np.clip(action_predicted, -1, 1)  # clip to [-1, 1]
                 [new_current_state, _], reward, done, info = env.step(action_predicted[0])
@@ -305,19 +270,17 @@ def play(train_indicator):
             if settings.WORKING_MODE == settings.WORKING_MODE_OPTIONS[0] or settings.WORKING_MODE == settings.WORKING_MODE_OPTIONS[1]\
                     or settings.WORKING_MODE == settings.WORKING_MODE_OPTIONS[8]:
                 state = new_state
-            # elif settings.WORKING_MODE == settings.WORKING_MODE_OPTIONS[1]:
-            #     state = state1
             else:
                 current_state = new_current_state
 
-            # Imprimir estadísticas cada step
+            # Print stats every step
             print(f"Predicted action in step {step} is: {action_predicted[0]}")
             # print("Episode %s - Step %s - Action %s - Reward %s" % (i, step, action_predicted[0], reward))
 
             step += 1
             if done:
                 print(env.summary)
-                # Imprimir estadisticas cada episode
+                # Print stats every episode
                 # print("Episode %s - Step %s - Action %s - Reward %s" % (i, step, action_predicted[0], reward))
                 break
 
@@ -325,7 +288,7 @@ def play(train_indicator):
         # Compute mean TD-error over the last episode
         # mean_td_error = np.mean(all_td_errors)
         
-        #Guardar datos en tensorboard
+        #Save data in tensorboard
         ep_rewards.append(total_reward)
         if (i > 0) and ((i % AGGREGATE_STATS_EVERY == 0) or (i ==1)):
             average_reward = np.mean(ep_rewards[-AGGREGATE_STATS_EVERY:])
@@ -342,30 +305,22 @@ def play(train_indicator):
         save_dir = settings.AGENT_PATH
         os.makedirs(save_dir, exist_ok=True)
         
-        #Guardar datos del entrenamiento en ficheros
+        # Save checkpoint data
         if i % 3 == 0 and train_indicator:
             actor.model.save(os.path.join(save_dir, f"{settings.TRAIN_MODE}_actor.model"))
             critic.model.save(os.path.join(save_dir, f"{settings.TRAIN_MODE}_critic.model"))
-            # actor.model.save_weights(settings.save_weights_path + str(settings.TRAIN_MODE) + "_actor.h5", overwrite=True)
-            # critic.model.save_weights(settings.save_weights_path + str(settings.TRAIN_MODE) + "_critic.h5", overwrite=True)
         if i % settings.N_save_stats == 0 and train_indicator:
             actor.model.save(os.path.join(save_dir, f"{settings.TRAIN_MODE}_{i}_actor.model"))
             critic.model.save(os.path.join(save_dir, f"{settings.TRAIN_MODE}_{i}_critic.model"))
-            # actor.model.save_weights(settings.save_weights_path + str(settings.TRAIN_MODE) + "_" + str(i) + "_actor.h5", overwrite=True)
-            # critic.model.save_weights(settings.save_weights_path + str(settings.TRAIN_MODE) + "_" + str(i) + "_critic.h5", overwrite=True)
         if (i > 10) and (total_reward > np.max(ep_rewards[:-1])):
             actor.model.save(os.path.join(save_dir, f"{settings.TRAIN_MODE}_{i}_best_reward_actor.model"))
             critic.model.save(os.path.join(save_dir, f"{settings.TRAIN_MODE}_{i}_best_reward_critic.model"))
-            # actor.model.save_weights(settings.save_weights_path + str(settings.TRAIN_MODE) + "_best_reward_actor.h5", overwrite=True)
-            # critic.model.save_weights(settings.save_weights_path + str(settings.TRAIN_MODE) + "_best_reward_critic.h5", overwrite=True)
-        # --- Save model if agent reaches target ---
+        # Save model if agent reaches target
         if env.summary.get('Target', 0) > 0:
             actor.model.save(os.path.join(save_dir, f"{settings.TRAIN_MODE}_{i}_reached_goal_actor.model"))
             critic.model.save(os.path.join(save_dir, f"{settings.TRAIN_MODE}_{i}_reached_goal_critic.model"))
             print(f"[SAVED] Model reached goal at episode {i}")
             env.summary['Target'] = 0  # Reset counter
-
-        # --- SAVE CHECKPOINT AND BUFFER ---
         if i % settings.N_save_stats == 0 and train_indicator:
             actor_ckpt_path = os.path.join(checkpoints_dir, f"{settings.TRAIN_MODE}_{i}_actor.model")
             critic_ckpt_path = os.path.join(checkpoints_dir, f"{settings.TRAIN_MODE}_{i}_critic.model")
@@ -381,26 +336,18 @@ def play(train_indicator):
                 json.dump({"episode": i, "ep_rewards" : ep_rewards}, f)
                 print(f"[Checkpoint] Saved metadata for episode {i}")
         
-        if settings.GUARDAR_DATOS == 1:
-        #Guardar la trayectoria recorrida
+        if settings.SAVE_DATA == 1:
             np.savetxt('Trayectorias/DDPG_trayectoria_' + str(settings.WORKING_MODE) + '_' + str(settings.TRAIN_MODE) + '_' + str(i) + '.txt', env.position_array, delimiter=';')
             env.position_array = []
 
         time_buff.append((time.time() - tm1))
-        #print(np.mean(np.array(time_buff)))
         tm = time.strftime("%Y-%m-%d %H:%M:%S")
         episode_stat = "%s -th Episode. %s total steps. Total reward: %s. Time %s" % (i, step, total_reward, tm)
-        # dif_time = "Step time %s" % (time.time() - tm1)
         print(episode_stat)
 
-        # Guardar estadísticas de cada episode
-        # with open(train_stat_file, "a") as outfile:
-        #     outfile.write(episode_stat + "\n")
         for actor_world in env.actor_list:
             actor_world.destroy()
 
-    # actor.model.save_weights(settings.save_weights_path + str(settings.TRAIN_MODE) + "last_actor.h5", overwrite=True)
-    # critic.model.save_weights(settings.save_weights_path + str(settings.TRAIN_MODE) + "last_critic.h5", overwrite=True)
     actor.model.save(os.path.join(settings.AGENT_PATH, f"{settings.TRAIN_MODE}_last_actor.model"), overwrite=True)
     critic.model.save(os.path.join(settings.AGENT_PATH, f"{settings.TRAIN_MODE}_last_critic.model"), overwrite=True)
 

@@ -1,26 +1,19 @@
 import os
 
-import random
 from collections import deque
 import numpy as np
-# import cv2
-# import time
 import tensorflow as tf
 import keras.backend.tensorflow_backend as backend
 import keras
-# from keras.models import load_model
 from carla_env import CarEnv
 import carla_config as settings
 
 if __name__ == '__main__':
-# Memory fraction
-    # print('entra al main')
+    # Memory fraction
     gpu_options = tf.GPUOptions(allow_growth=True)
-    #gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=MEMORY_FRACTION)
     backend.set_session(tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)))
     # Load the model
     actor_model = keras.models.load_model(settings.ACTOR_MODEL_PATH)
-    # critic_model = keras.models.load_model(settings.CRITIC_MODEL_PATH)
     print(f"Model selected for evaluation: Actor: {settings.ACTOR_MODEL_PATH}\n")
     # Create environment
     env = CarEnv()
@@ -38,11 +31,8 @@ if __name__ == '__main__':
     else:
         aux = np.ones((settings.IM_HEIGHT_CNN, settings.IM_WIDTH_CNN, settings.IM_LAYERS))
         aux = aux / 255
-        aux = np.transpose(aux, (1, 0, 2))  # CNN_RGB requires transposition
+        aux = np.transpose(aux, (1, 0, 2))  # CNN setups require transposition
         actor_model.predict(np.array(aux).reshape(-1, *aux.shape))[0]
-        # state = np.expand_dims(state, -1)
-        # aux2 = np.ones(settings.N_data_RNN, )
-        # actor_model.predict([np.array(aux).reshape(-1, *aux.shape) / 255, np.array(aux2).reshape(-1, *aux2.shape)])[0]
 
     # Loop over episodes
     episode = 0
@@ -75,8 +65,7 @@ if __name__ == '__main__':
         env.collision_hist = []
 
         done = False
-        # Guardar los Waypoints
-        if settings.GUARDAR_DATOS == 1:
+        if settings.SAVE_DATA == 1:
             wp_dir = 'Waypoints/waypoints_' + str(settings.WORKING_MODE)
             os.makedirs(wp_dir, exist_ok=True)
             np.savetxt(
@@ -121,7 +110,7 @@ if __name__ == '__main__':
                 break
 
         # Save trajectory if required
-        if settings.GUARDAR_DATOS == 1:
+        if settings.SAVE_DATA == 1:
             traj_dir = 'Trayectorias_DDPG/trayectoria_' + str(settings.WORKING_MODE)
             os.makedirs(traj_dir, exist_ok=True)
             np.savetxt(

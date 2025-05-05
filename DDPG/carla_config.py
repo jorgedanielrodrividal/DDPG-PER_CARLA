@@ -1,7 +1,7 @@
 
 #TRAINING MODES
 TRAIN_PLAY_MODE = 0 # Train=1 Play=0
-GUARDAR_DATOS = 0   # Guardar=1 NO guardar=0
+SAVE_DATA = 0  
 TRAIN_PLAY = ["PLAY", "TRAIN"]
 WORKING_MODE_OPTIONS = ["WAYPOINTS_CARLA","WAYPOINTS_IMAGE","CNN_TRAJECTORY_BW","CNN_RGB","CNN_RGB_TRAJECTORY",
                         "CNN_SEMANTIC", "CNN_GRAYSCALE", "CNN_FLATTEN", "PRE_TRAINED_CNN"]
@@ -13,28 +13,12 @@ TRAIN_MODE_OPTIONS = ["RANDOM", "STRAIGHT", "TURN_LEFT", "TURN_RIGHT", "TURN_RIG
 TRAIN_MODE = "TURN_RIGHT_LEFT"
 
 # PATHS
-path2CARLA = "/home/jorge-daniel/Desktop/carla/" # "/home/robesafe/carla/" # PATH hasta carla se utiliza para limpiar el mapa
-#path2carla = "/home/proyectosros/carla/carla/"
-# PRE_CNN_PATH = "PRE_CNN_models/PilotNet_2002m_BEV.model"
+path2CARLA = "/home/jorge-daniel/Desktop/carla/"
 AGENT_PATH = "data/data_" + str(WORKING_MODE) + "/"
 image_network = "NETWORKS/"
 
 
-ACTOR_MODEL_PATH = "data/data_WAYPOINTS_CARLA/TURN_RIGHT_LEFT_331_reached_goal_actor.model"
-# ACTOR_MODEL_PATH = "data/data_WAYPOINTS_CARLA/TURN_RIGHT_LEFT_609_reached_goal_actor.model"
-# CRITIC_MODEL_PATH = "data/data_WAYPOINTS_CARLA/TURN_RIGHT_LEFT_best_reward_critic.model"
-
-# actor_weights_file  = "data/data_" + str(WORKING_MODE) + "/" + str(TRAIN_MODE) + "_best_reward_actor.h5"
-# critic_weights_file = "data/data_" + str(WORKING_MODE) + "/" + str(TRAIN_MODE) + "_best_reward_critic.h5"
-
-# actor_weights_file  = "data/data_" + str(WORKING_MODE) + "_/TURN_RIGHT_LEFT_best_reward_actor.h5"
-# critic_weights_file = "data/data_" + str(WORKING_MODE) + "_/TURN_RIGHT_LEFT_best_reward_critic.h5"
-
-# actor_weights_file  = "data/data_" + str(WORKING_MODE) + "_/_TURN_RIGHT_LEFT_150_actor.h5"
-# critic_weights_file = "data/data_" + str(WORKING_MODE) + "_/_TURN_RIGHT_LEFT_150_critic.h5"
-
-# actor_weights_file  = "data/data_" + str(WORKING_MODE) + "/RANDOM_350_actor.h5"
-# critic_weights_file = "data/data_" + str(WORKING_MODE) + "/RANDOM_350_critic.h5"
+# ACTOR_MODEL_PATH = "data/data_WAYPOINTS_CARLA/TURN_RIGHT_LEFT_331_reached_goal_actor.model"
 
 
 N_save_stats = 500

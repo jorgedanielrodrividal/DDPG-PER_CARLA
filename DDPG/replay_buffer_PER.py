@@ -1,4 +1,8 @@
-import random
+####################################################################################################################################################################################
+# Implemented based on:
+#  T. Schaul, J. Quan, I. Antonoglou, and D. Silver, “Prioritized experience replay,” in International Conference on Learning Representations (ICLR), 2015.
+####################################################################################################################################################################################
+
 from collections import deque
 import numpy as np
 
