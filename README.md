@@ -47,17 +47,16 @@ Autonomous lane following based on imitation learning long history [14]. Imitati
 - a transition model, which determines how the environment evolves:
   - either probabilistically, $s_{i+1} \sim P(s_{i+1} \mid s_i, a_i)$,  
   - or deterministically, $s_{i+1} = f(s_i, a_i)$,  
-- a loss function $L(a^*, a)$, which evaluates the difference between the expert action $a^*$ and the predicted action $a$ from the learned policy.
+- a loss function, which evaluates the difference between the expert action and the predicted action $a$ from the learned policy.
 
 The agent begins in an initial state $s_0$ and sequentially executes its policy to select actions. At each time step $i$, the agent selects an action according to $a_i = \pi_{\theta}(s_i)$, and transitions to the next state according to $s_{i+1} \sim P(s_{i+1} \mid s_i, a_i)$. This new state is then used to generate the next action $a_{i+1} = \pi_{\theta}(s_{i+1})$, and the process repeats. The sequence of states and actions encountered by the agent is recorded as a trajectory $\tau = (s_0, a_0, s_1, a_1, \dots)$, which is collected through an iterative method known as the rollout algorithm. This continues until the episode is terminated. To train the policy, the loss is computed at each step by comparing the action $a$ taken by the learned policy against the expert action for the same state. This loss is then minimized through standard optimization procedures.
 
 In imitation learning, the goal is to learn a policy $\pi_\theta(s)$ that imitates an expert policy $\pi^*(s)$ by minimizing a loss function over the space of states encountered by the learned policy.
 
-The objective is:
-
-$$
+The objective is
+$
 \arg\min_{\theta} \ \mathbb{E}_{s \sim P(s \mid \pi_\theta)} \left[ \mathcal{L} \left( \pi^*(s), \pi_\theta(s) \right) \right]
-$$
+$
 
 - Here, $P(s \mid \pi_\theta)$ is the state distribution induced by rolling out the current learned policy $\pi_\theta$.
 - $\mathcal{L}(\cdot, \cdot)$ is a task-specific loss function, such as squared error or cross-entropy.
