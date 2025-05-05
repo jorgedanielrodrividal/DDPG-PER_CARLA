@@ -1,6 +1,8 @@
 # DDPG-PER in CARLA
 
-This project implements Deep Deterministic Policy Gradients (DDPG) with Exploration [1] and Prioritized Experience Replay (PER) [2] in CARLA simulator [3]. The Reinforcement Learning agent is able to learn a policy for lane following faster as compared to Deep Q Learning [4] agent. Seven agent variants are implemented, six of them using no image as input and one using B/W segmented image of the road over the whole route that the vehicle must drive. A priority to waypoint input is given in this study over image input is done due to the former being a much quicker approach  This study is heavily inspired by the pioneering research of Kendall et. al. [5], who implemented a DDPG-PER trained exclusively with a single monocular image in a real electric vehicle and Pérez‑Gil et. al. [6] who implemented several DDPG agents in CARLA. This implementation is based on the [official implementation](https://github.com/RobeSafe-UAH/DDPG-CARLA) of [6]
+This project implements Deep Deterministic Policy Gradients (DDPG) with Exploration [1] and Prioritized Experience Replay (PER) [2] in the CARLA simulator [3]. The reinforcement learning agent learns a lane-following policy more efficiently than a Deep Q-Learning (DQN) agent [4]. A total of eight agent variants are implemented: seven use non-visual inputs, while one processes black-and-white segmented road images covering the full route the vehicle is required to drive.
+
+This study prioritizes waypoint-based inputs over image-based ones, as the former enables faster and more efficient learning in the simulator. The work is strongly inspired by the pioneering research of Kendall et al. [5], who successfully trained a DDPG-PER agent using only a single monocular camera image on a real electric vehicle, and Pérez‑Gil et al. [6], who implemented several DQN and DDPG agents within CARLA. This implementation is based on the [official implementation](https://github.com/RobeSafe-UAH/DDPG-CARLA) of [6]
 
 ## Setup
 
@@ -45,13 +47,13 @@ launch_DQN.py
 
 ## Related Work 
 
-The closest work in the current literature can be clasified as either classical autonomous driving relying on mapping, imitation learning and Reinforcement Learning.
+The closest work in the current literature can be clasified as either Classical Autonomous Driving relying on mapping, Imitation Learning and Reinforcement Learning.
 
-### 1) Classical Autonomous Driving. 
+### 1) Classical Autonomous Driving
 
-Several landmark challenges, such as the DARPA Urban Challenge and the Intelligent Vehicle Future Challenge (IVFC), have significantly advanced the field of autonomous driving by evaluating systems in complex, real-world scenarios that demand sophisticated sensing and control strategies [7]. These approaches typically rely on what is known as a modular pipeline, in which the driving system is composed of independently designed components responsible for specific functions, such as low-level perception, scene parsing, mapping, planning, and control [8]. A key advantage of this architecture lies in its modularity, which facilitates parallel development and system integration. However, this same modularity introduces a major limitation: the inability to train the entire system in an end-to-end fashion. Each module is optimized independently, often using training data that is not representative of the complete driving task, potentially leading to suboptimal overall performance. Furthermore, a notable drawback of these pipelines is their reliance on high-definition (HD) maps for both localization and planning (resources that are costly to generate and maintain). Consequently, there is growing interest in localization techniques that do not depend on HD maps [9]. For instance, recent work has employed deconvolutional neural networks to detect structural changes in street-view video, enabling more scalable and frequent updates to large-scale maps [10]. In addition, semantic segmentation remains a cornerstone of low-level perception, providing critical scene understanding capabilities [11], [12], [13]. These modular perception and mapping frameworks continue to underpin commercial efforts aimed at building robust and scalable autonomous driving systems.
+Several landmark challenges, such as the DARPA Urban Challenge and the Intelligent Vehicle Future Challenge (IVFC), have significantly advanced the field of autonomous driving by evaluating systems in complex, real-world scenarios that demand sophisticated sensing and control strategies [7]. These approaches typically rely on what is known as a modular pipeline, in which the driving system is composed of independently designed components responsible for specific functions, such as low-level perception, scene parsing, mapping, planning and control [8]. A key advantage of this architecture lies in its modularity, which facilitates parallel development and system integration. However, this same modularity introduces a major limitation: the inability to train the entire system in an end-to-end fashion. Each module is optimized independently, often using training data that is not representative of the complete driving task, potentially leading to suboptimal overall performance. Furthermore, a notable drawback of these pipelines is their reliance on high-definition (HD) maps for both localization and planning (resources that are costly to generate and maintain). Consequently, there is growing interest in localization techniques that do not depend on HD maps [9]. For instance, researchers employed deconvolutional neural networks to detect structural changes in street-view video, enabling more scalable and frequent updates to large-scale maps [10]. In addition, semantic segmentation remains a cornerstone of low-level perception, providing critical scene understanding capabilities [11], [12], [13]. These modular perception and mapping frameworks continue to underpin commercial efforts aimed at building robust and scalable autonomous driving systems.
 
-### 2) End-to-End learning: Imitation learning. 
+### 2) End-to-End learning: Imitation learning
 
 Autonomous lane following based on imitation learning long history [14]. Imitation learning aims to train a policy to mimic given expert decisions. An imitation learning framework consists of:
 
@@ -80,7 +82,7 @@ Behavior cloning (BC), despite its simplicity and appeal as a supervised learnin
 
 End-to-end autonomous driving algorithms increasingly rely on RGB images as the sole input to neural networks. However, recent studies show that multimodal perception data (i.e. combining RGB and depth) consistently outperforms unimodal RGB inputs, particularly for conditional imitation learning (CIL) agents [17]. 
 
-### 3) Reinforcement Learning
+### 3) End-to-End Learning: Reinforcement Learning
 
 Reinforcement learning aims to solve Markov Decision Processes (MDPs) [18]. An MDP consists of:
 
