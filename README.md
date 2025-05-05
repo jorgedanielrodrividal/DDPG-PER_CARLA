@@ -51,34 +51,15 @@ Autonomous lane following based on imitation learning long history [14]. Imitati
 
 The agent begins in an initial state $s_0$ and sequentially executes its policy to select actions. At each time step $i$, the agent selects an action according to $a_i = \pi_{\theta}(s_i)$, and transitions to the next state according to $s_{i+1} \sim P(s_{i+1} \mid s_i, a_i)$. This new state is then used to generate the next action $a_{i+1} = \pi_{\theta}(s_{i+1})$, and the process repeats. The sequence of states and actions encountered by the agent is recorded as a trajectory $\tau = (s_0, a_0, s_1, a_1, \dots)$, which is collected through an iterative method known as the rollout algorithm. This continues until the episode is terminated. To train the policy, the loss is computed at each step by comparing the action $a$ taken by the learned policy against the expert action for the same state. This loss is then minimized through standard optimization procedures.
 
-In imitation learning, the goal is to learn a policy $\pi_\theta(s)$ that imitates an expert policy $\pi^*(s)$ by minimizing a loss function over the space of states encountered by the learned policy.
-
-The objective is
-$
-\arg\min_{\theta} \ \mathbb{E}_{s \sim P(s \mid \pi_\theta)} \left[ \mathcal{L} \left( \pi^*(s), \pi_\theta(s) \right) \right]
-$
-
-- Here, $P(s \mid \pi_\theta)$ is the state distribution induced by rolling out the current learned policy $\pi_\theta$.
-- $\mathcal{L}(\cdot, \cdot)$ is a task-specific loss function, such as squared error or cross-entropy.
-
-The state distribution depends on the current policy $\pi_\theta$, meaning that the learner's own decisions affect the states it visits during training.
+In imitation learning, the goal is to learn a policy $\pi_\theta(s)$ that imitates an expert policy $\pi^*(s)$ by minimizing a loss function over the space of states encountered by the learned policy. The state distribution depends on the current policy $\pi_\theta$, meaning that the learner's own decisions affect the states it visits during training.
 
 There are some scenarios where imitation learning is not enough in the context of self-driving. In scenarios like intersections, visual inputs alone may not provide sufficient information to decide whether to turn left, right, or go straight. To overcome these challenges, a method known as **Conditional Imitation Lerning** (CIL) was introduced [15]. Conditional Imitation Learning integrates high-level commands into the learning process: The model is trained on triplets comprising observations (e.g., images), commands (e.g., "turn left"), and corresponding expert actions. At test time, the model receives both sensory inputs and high-level commands, enabling it to make context-aware decisions.
 
 #### 2.1) Behavior Cloning
 
-Behavior Cloning is a special case of imitation learning where we assume access to a dataset of expert demonstrations $(s^*, a^*)$ sampled from a fixed distribution $P^*$.
+Behavior Cloning is a special case of imitation learning where we assume access to a dataset of expert demonstrations sampled from a fixed distribution $P^*$.
 
-The objective becomes:
-
-$$
-\arg\min_{\theta} \ \mathbb{E}_{(s^*, a^*) \sim P^*} \left[ \mathcal{L} \left( a^*, \pi_\theta(s^*) \right) \right]
-$$
-
-- $P^*$ is the expert-induced distribution over state-action pairs.
-- The loss is computed by comparing the learner’s predicted action $\pi_\theta(s^*)$ to the expert action $a^*$.
-
-Behavior cloning (BC), despite its simplicity and appeal as a supervised learning method, often fails in complex, real-world scenarios like autonomous driving. BC assumes that the learner trains on state-action pairs $(s^*, a^*)$ sampled from the expert distribution $P^*$, which implies that the model is never trained on states outside the expert's trajectory distribution $P^*$, yet at test time, small prediction errors may lead the agent to new states it hasn't seen before i.e. states outside of $P^{*}$ [16].
+Behavior cloning (BC), despite its simplicity and appeal as a supervised learning method, often fails in complex, real-world scenarios like autonomous driving. BC assumes that the learner trains on expert state-action pairs sampled from the expert distribution, which implies that the model is never trained on states outside the expert's trajectory distribution, yet at test time, small prediction errors may lead the agent to new states it hasn't seen before i.e. states outside of $P^{*}$ [16].
 
 End-to-end autonomous driving algorithms increasingly rely on RGB images as the sole input to neural networks. However, recent studies show that multimodal perception data (i.e. combining RGB and depth) consistently outperforms unimodal RGB inputs, particularly for conditional imitation learning (CIL) agents [17]. 
 
