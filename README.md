@@ -111,11 +111,9 @@ under a policy given by the actor $\pi : \mathcal{S} \rightarrow \mathcal{A}$, w
 
 Here $(s_t, a_t, r_{t+1}, d_{t+1}, s_{t+1})$ is an experience tuple, a transition from state $s_t$ to $s_{t+1}$ using action $a_t$ and receiving reward $r_{t+1}$ and "done" flag $d_{t+1}$, selected from a buffer of past experiences. The error in the Bellman equality, which the critic attempts to minimise, is termed the temporal difference (TD) error.
 
-DDPG is an **off-policy learning algorithm**, which means that the actions used during training are sampled from a policy that differs from the actor's learned optimal policy. This approach is employed to expose the learning process to a broader and more diverse range of state-action pairs than would typically be encountered under the optimal policy alone, thereby enhancing the robustness and generalization of the agent. To enhance robustness, discrete Ornstein-Uhlenbeck process noise [19] is added to the optimal policy. Therefore, at each step we add to optimal actions noise $x_t$ given by:
+DDPG is an **off-policy learning algorithm**, which means that the actions used during training are sampled from a policy that differs from the actor's learned optimal policy. This approach is employed to expose the learning process to a broader and more diverse range of state-action pairs than would typically be encountered under the optimal policy alone, thereby enhancing the robustness and generalization of the agent. To enhance robustness, discrete Ornstein-Uhlenbeck process noise [19] is added to the optimal policy. 
 
-$$
-x_{t+1} = x_t + \theta(\mu - x_t) + \sigma \epsilon_t, \tag{4}
-$$
+Therefore, at each step we add to optimal actions noise $x_t$ given by, $x_{t+1} = x_t + \theta(\mu - x_t) + \sigma \epsilon_t$
 
 where $\theta, \mu, \sigma$ are hyperparameters and $\{\epsilon_t\}_t$ are i.i.d. random variables sampled from the normal distribution $\mathcal{N}(0, 1)$.
 
